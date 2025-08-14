@@ -237,31 +237,43 @@
     <label for="jobTitle" class="required">Job Title:</label>
     <input type="text" id="jobTitle" name="jobTitle" placeholder="Please enter your job title" required>
     
-    <fieldset>
-      <legend class="dietary-legend required">Do you have any dietary restrictions ? <span class="dietary-required">(Select only one option)</span></legend>
-      
-      <label class="dietary-option">
-        <input type="radio" name="dietary" value="No restrictions">
-        No restrictions
-      </label>
-      
-      <label class="dietary-option">
-        <input type="radio" name="dietary" value="No beef">
-        No beef
-      </label>
-      
-      <label class="dietary-option">
-        <input type="radio" name="dietary" value="Vegetarian">
-        Vegetarian
-      </label>
-      
-      <label class="dietary-option">
-        <input type="radio" name="dietary" value="Food allergy">
-        Food allergy, please specify
-      </label>
-      
-      <input type="text" id="otherDietary" name="otherDietary" placeholder="Please specify food allergy" style="margin-top: 10px; display: none;">
-    </fieldset>
+  <!-- Meal selection -->
+  <fieldset>
+    <legend class="required">Meal (Select one option)</legend>
+    <label>
+      <input type="radio" name="meal" value="Bento Tempura Set" required>
+      Bento Tempura Set
+    </label>
+    <label>
+      <input type="radio" name="meal" value="Bento Teriyaki Salmon Set">
+      Bento Teriyaki Salmon Set
+    </label>
+    <label>
+      <input type="radio" name="meal" value="Bento Teriyaki Chicken Set">
+      Bento Teriyaki Chicken Set
+    </label>
+  </fieldset>
+
+  <!-- Beverage selection -->
+  <fieldset>
+    <legend class="required">Beverage (Select one option)</legend>
+    <label>
+      <input type="radio" name="beverage" value="Matcha Green Tea" required>
+      Matcha Green Tea
+    </label>
+    <label>
+      <input type="radio" name="beverage" value="Matcha Lemon Tea">
+      Matcha Lemon Tea
+    </label>
+    <label>
+      <input type="radio" name="beverage" value="Peach Tea">
+      Peach Tea
+    </label>
+    <label>
+      <input type="radio" name="beverage" value="Apple Tea">
+      Apple Tea
+    </label>
+  </fieldset>
     
     <div class="privacy">
       <p>
@@ -282,97 +294,83 @@
     </div>
   </div>
 
-  <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzUJE4F00vyuiEgOiU8P0E4vZZdPW0Ko4YsTB1VgNpR3-mvXj8-5orsubz4H4dUWXo/exec';
-    const form = document.getElementById('adobeForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const errorMsg = document.getElementById('errorMsg');
-    const welcomePage = document.getElementById('welcomePage');
-    const thankYouPage = document.getElementById('thankYouPage');
-    const startFormBtn = document.getElementById('startFormBtn');
-    const header = document.querySelector('.header');
-    const otherDietaryInput = document.getElementById('otherDietary');
-    const dietaryRadios = document.querySelectorAll('input[name="dietary"]');
+<script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbzUJE4F00vyuiEgOiU8P0E4vZZdPW0Ko4YsTB1VgNpR3-mvXj8-5orsubz4H4dUWXo/exec';
+  const form = document.getElementById('adobeForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const errorMsg = document.getElementById('errorMsg');
+  const welcomePage = document.getElementById('welcomePage');
+  const thankYouPage = document.getElementById('thankYouPage');
+  const startFormBtn = document.getElementById('startFormBtn');
+  const header = document.querySelector('.header');
+  const phoneInput = document.getElementById('phone');
 
-    const phoneInput = document.getElementById('phone');
-    phoneInput.addEventListener('input', function(e) {
-      let value = e.target.value.replace(/\D/g, '');
-      if (value.length > 3 && value.length <= 6) {
-        value = value.replace(/(\d{3})(\d+)/, '$1-$2');
-      } else if (value.length > 6) {
-        value = value.replace(/(\d{3})(\d{3})(\d+)/, '$1-$2-$3');
-      }
-      e.target.value = value;
-    });
+  phoneInput.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 3 && value.length <= 6) {
+      value = value.replace(/(\d{3})(\d+)/, '$1-$2');
+    } else if (value.length > 6) {
+      value = value.replace(/(\d{3})(\d{3})(\d+)/, '$1-$2-$3');
+    }
+    e.target.value = value;
+  });
 
-    welcomePage.style.display = 'flex';
-    form.style.display = 'none';
-    thankYouPage.style.display = 'none';
-    header.style.display = 'none';
+  welcomePage.style.display = 'flex';
+  form.style.display = 'none';
+  thankYouPage.style.display = 'none';
+  header.style.display = 'none';
 
-    startFormBtn.addEventListener('click', () => {
-      welcomePage.style.display = 'none';
-      form.style.display = 'block';
-      header.style.display = 'block';
-    });
+  startFormBtn.addEventListener('click', () => {
+    welcomePage.style.display = 'none';
+    form.style.display = 'block';
+    header.style.display = 'block';
+  });
 
-    dietaryRadios.forEach(radio => {
-      radio.addEventListener('change', () => {
-        otherDietaryInput.style.display = radio.value === 'Food allergy' ? 'block' : 'none';
-        if (radio.value !== 'Food allergy') {
-          otherDietaryInput.value = '';
-        }
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg.textContent = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting...";
+
+    const formData = new FormData(form);
+    if (!formData.get('meal') || !formData.get('beverage')) {
+      errorMsg.textContent = 'Please select both meal and beverage options.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = "COMPLETE REGISTRATION";
+      return;
+    }
+
+    try {
+      const data = {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        company: formData.get('company'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        jobTitle: formData.get('jobTitle'),
+        meal: formData.get('meal'),
+        beverage: formData.get('beverage')
+      };
+
+      await fetch(scriptURL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
       });
-    });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorMsg.textContent = '';
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Submitting...";
+      form.style.display = 'none';
+      header.style.display = 'none';
+      thankYouPage.style.display = 'flex';
 
-      const isDietarySelected = Array.from(dietaryRadios).some(radio => radio.checked);
-      if (!isDietarySelected) {
-        errorMsg.textContent = 'Please select one dietary requirement option.';
-        submitBtn.disabled = false;
-        submitBtn.textContent = "COMPLETE REGISTRATION";
-        return;
-      }
-
-      try {
-        const formData = new FormData(form);
-        const data = {
-          firstName: formData.get('firstName'),
-          lastName: formData.get('lastName'),
-          company: formData.get('company'),
-          email: formData.get('email'),
-          phone: formData.get('phone'),
-          jobTitle: formData.get('jobTitle'),
-          dietary: formData.get('dietary'),
-          otherDietary: formData.get('dietary') === 'Food allergy' ? formData.get('otherDietary') : ''
-        };
-
-        await fetch(scriptURL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
-        });
-
-        form.style.display = 'none';
-        header.style.display = 'none';
-        thankYouPage.style.display = 'flex';
-
-      } catch (error) {
-        console.error('Error:', error);
-        errorMsg.textContent = 'Error: Please try again or contact support.';
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "COMPLETE REGISTRATION";
-      }
-    });
-  </script>
+    } catch (error) {
+      console.error('Error:', error);
+      errorMsg.textContent = 'Error: Please try again or contact support.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "COMPLETE REGISTRATION";
+    }
+  });
+</script>
 </body>
 </html>
