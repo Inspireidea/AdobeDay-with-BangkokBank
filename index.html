@@ -196,8 +196,13 @@
       margin-left: 5px;
       font-weight: normal;
     }
+    /* ทำให้ตัวเลือกภายใน Meal และ Beverage เป็นตัวบาง */
+    fieldset label {
+      font-weight: normal;
+    }
   </style>
 </head>
+  
 <body>
   <div class="header">
     <img src="Adobe_Logo_Red.png" alt="Adobe Logo" class="logo">
@@ -243,11 +248,11 @@
     <label>
       <input type="radio" name="meal" value="Bento Tempura Set" required>
       Bento Tempura Set
-    </label><br>
+    </label>
     <label>
       <input type="radio" name="meal" value="Bento Teriyaki Salmon Set">
       Bento Teriyaki Salmon Set
-    </label><br>
+    </label>
     <label>
       <input type="radio" name="meal" value="Bento Teriyaki Chicken Set">
       Bento Teriyaki Chicken Set
@@ -260,15 +265,15 @@
     <label>
       <input type="radio" name="beverage" value="Matcha Green Tea" required>
       Matcha Green Tea
-    </label><br>
+    </label>
     <label>
       <input type="radio" name="beverage" value="Matcha Lemon Tea">
       Matcha Lemon Tea
-    </label><br>
+    </label>
     <label>
       <input type="radio" name="beverage" value="Peach Tea">
       Peach Tea
-    </label><br>
+    </label>
     <label>
       <input type="radio" name="beverage" value="Apple Tea">
       Apple Tea
